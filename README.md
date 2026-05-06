@@ -1,7 +1,7 @@
 # Medical Benchmark Public Subset
 
 This repository contains the public benchmark subset used for dataset loading,
-deterministic judging, report-table aggregation, and Track3-style model
+deterministic judging, report-table aggregation, and model
 evaluation.
 
 ## Contents
@@ -9,8 +9,8 @@ evaluation.
 - Dataset loaders for UCSF-PDGM, NSCLC Radiogenomics, and LUMIERE.
 - Rule-based answer extraction and scoring utilities.
 - Hidden-evidence scoring helpers for mask-derived key slices and RAS points.
-- Track3 benchmark runners for UCSF-PDGM, NSCLC, and LUMIERE.
-- API-backed Track3 inference helpers plus M3D and RadFM worker wrappers.
+- Benchmark runners for UCSF-PDGM, NSCLC, and LUMIERE.
+- API-backed inference helpers plus M3D and RadFM worker wrappers.
 - Sanitized public dataset download helpers for the benchmark datasets.
 
 ## Layout
