@@ -1,0 +1,2 @@
+# Test and release-audit dependencies.
+pytest==8.4.2

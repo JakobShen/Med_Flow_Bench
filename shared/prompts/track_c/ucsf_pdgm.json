@@ -1,0 +1,61 @@
+{
+  "$schema": "../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "radiology.track_c.ucsf_pdgm",
+  "version": "1.2.0",
+  "benchmark": "UCSF-PDGM",
+  "track": "Track C",
+  "description": "Runtime-agnostic brain MRI diagnosis and localization prompt.",
+  "entrypoints": [
+    "radiology/track_c/benchmark_UCSF_PDGM_track_c.py"
+  ],
+  "templates": {
+    "fragments": {
+      "delivery": {
+        "attached_images": "You will receive attached figures or slice images. Whenever a tile caption contains a sequence name, plane name, or canonical axis coordinate in mm, use that annotation directly rather than inferring a different coordinate system. ",
+        "external_worker": "You will receive one MRI volume at a time through the backend model interface. Base your answer only on the current volume under review. "
+      },
+      "evidence": {
+        "disabled": "",
+        "enabled": "If an EVIDENCE block is requested, include it exactly once before the final answer line. KEY_SLICE_AXIAL_MM refers to the axial S coordinate in canonical RAS space; KEY_SLICE_SAGITTAL_MM refers to the sagittal R coordinate; KEY_SLICE_CORONAL_MM refers to the coronal A coordinate. RSA must be a single [R, A, S] point inside the lesion, not background. "
+      },
+      "segment_source_line": "A geometry-matched reference MRI volume is '{{source_name}}'. You may use it as a convenient anchor if relevant.\n"
+    },
+    "system": [
+      "You are a neuroradiology benchmark model running in MEDOPENCLAW Track C / Open-Method mode. ",
+      "The study representation comes from the Track C method '{{method_name}}'. ",
+      "Your task is a 3-way multiple-choice diagnosis on pre-operative brain MRI. ",
+      "Choose exactly one label: A, B, or C. ",
+      "Do not output JSON. Write a brief rationale, then end with a single final line exactly formatted as 'ANSWER: <A|B|C>'. ",
+      "If uncertain, still choose the most likely option. ",
+      "{{delivery_guidance}}",
+      "{{evidence_guidance}}"
+    ],
+    "segment_requirement": [
+      "Additional evidence output is required for this case.\n",
+      "The benchmark has a hidden tumor segmentation in a shared co-registered MRI space.\n",
+      "{{source_line}}",
+      "If there are multiple disconnected tumor foci, localize the largest connected tumor component.\n",
+      "After your brief rationale, output the following block exactly once before the final answer line:\n",
+      "EVIDENCE:\n",
+      "KEY_SLICE_AXIAL_MM: <float>\n",
+      "KEY_SLICE_SAGITTAL_MM: <float>\n",
+      "KEY_SLICE_CORONAL_MM: <float>\n",
+      "RSA: [<R>, <A>, <S>]\n"
+    ],
+    "user": [
+      "Case ID: {{case_id}}\n",
+      "Track C method: {{method_name}}\n\n",
+      "Available MRI series for this case:\n",
+      "{{series_lines}}\n\n",
+      "Representation summary for the current Track C method:\n",
+      "{{artifact_block}}\n\n",
+      "Task: classify the case into one option:\n",
+      "  A) Glioblastoma\n",
+      "  B) Oligodendroglioma / Astrocytoma\n",
+      "  C) No tumor\n\n",
+      "{{evidence_block}}",
+      "Write a brief rationale, then end with a single final line exactly as: ANSWER: <A|B|C>."
+    ]
+  }
+}

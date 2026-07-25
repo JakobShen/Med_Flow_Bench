@@ -1,0 +1,105 @@
+{
+  "$schema": "../../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "3d_slicer.track_a_b.lumiere",
+  "version": "1.1.0",
+  "benchmark": "LUMIERE",
+  "track": "Track A/B",
+  "description": "Viewer-native longitudinal RANO classification prompt.",
+  "entrypoints": [
+    "radiology/slicer_track_a_b/benchmark_LUMIERE.py"
+  ],
+  "templates": {
+    "fragments": {
+      "tool_guidance": {
+        "none": "Use only the baseline/core tools already exposed in this run. ",
+        "manual": "Use the provided tools to inspect the already loaded MRI volumes and switch among them with select_volume. ",
+        "auto": "Use the provided tools, including the already active optional tool pack tools, to inspect the already loaded MRI volumes and switch among them with select_volume. "
+      },
+      "registration_guidance": {
+        "registered": "",
+        "unregistered": "The loaded volumes are native/unregistered LUMIERE images. Before making the longitudinal comparison, use registration tools to align CURRENT to OLD, or align matched modalities to a common reference, then inspect the registered result. "
+      },
+      "code_execution": {
+        "disabled": "",
+        "enabled": " A provider-native code execution tool is enabled. You may use it for additional multi-pass visual inspection if it helps."
+      },
+      "image_space": {
+        "registered": "DeepBraTumIA atlas-space skull-stripped MRI (MNI)",
+        "unregistered": "native unregistered skull-stripped MRI"
+      },
+      "registration_hint": {
+        "registered": "",
+        "unregistered": "- These are native/unregistered LUMIERE images. Use RegistrationTools before final comparison: register CURRENT to OLD for matched modalities, inspect/resample the aligned output, then answer from the CURRENT study.\n"
+      }
+    },
+    "system": [
+      "You are an AI radiology assistant using a remote MRI viewer (3D Slicer). ",
+      "The scene already contains two MRI studies from the same patient: OLD and CURRENT. ",
+      "Do NOT call open_case unless the viewer is clearly empty or broken. ",
+      "If you must call open_case, use the exact absolute nifti_files paths listed in the user message so both OLD and CURRENT studies are loaded together. ",
+      "The scene inventory is already provided in the prompt, so you do not need a separate listing step before starting. ",
+      "{{tool_guidance}}",
+      "Focus on the CURRENT study when answering. OLD is only the reference study for interval comparison. ",
+      "Compare matching modalities across OLD and CURRENT. CT1 is usually the most important sequence for RANO response assessment, with FLAIR/T2/T1 as supporting context. ",
+      "This benchmark intentionally excludes Pre-Op and Post-Op as answer options. You must choose exactly one of the four RANO response classes. ",
+      "In addition to the answer choice, you must also output the requested YES/NO evidence fields for the CURRENT study only. ",
+      "You are not allowed to answer UNKNOWN for evidence; each evidence field must be either YES or NO. ",
+      "Do not output JSON. End with the exact structured block shown in the user message, with ANSWER as the final line. ",
+      "{{registration_guidance}}",
+      "{{code_execution_guidance}}"
+    ],
+    "case_brief": [
+      "Case brief for {{question_id}}:\n",
+      "- Dataset: LUMIERE\n",
+      "- Image space: {{image_space_text}}\n",
+      "- Patient: {{patient_id}}\n",
+      "- OLD reference study: {{old_timepoint}}\n",
+      "- CURRENT study to classify: {{current_timepoint}}\n",
+      "- Loaded modalities for both studies: CT1, T1, T2, FLAIR\n",
+      "- Tumor segmentation masks are intentionally hidden in this v1 benchmark.\n",
+      "- Evidence fields describe the CURRENT study only.\n\n",
+      "{{loaded_volume_guide}}"
+    ],
+    "output": [
+      "NON_MEASURABLE_LESION: <YES|NO>\n",
+      "T2_PROGRESSION: <YES|NO>\n",
+      "CURRENT_TARGET_LESION: <YES|NO>\n",
+      "NEW_TARGET_LESION: <YES|NO>\n",
+      "CURRENT_NON_TARGET_LESION: <YES|NO>\n",
+      "NEW_NON_TARGET_LESION: <YES|NO>\n",
+      "ANSWER: <A|B|C|D>"
+    ],
+    "user": [
+      "Question ID: {{question_id}}\n",
+      "Patient: {{patient_id}}\n",
+      "OLD reference study: {{old_timepoint}}\n",
+      "CURRENT study to classify: {{current_timepoint}}\n\n",
+      "Absolute staging directory already opened by the system: {{staged_dir}}\n\n",
+      "If the scene ever becomes unusable and you absolutely must call open_case again, use the following exact absolute nifti_files paths so BOTH studies are reloaded together:\n",
+      "{{file_lines}}\n\n",
+      "Task: compare the CURRENT study against the OLD reference study and choose the CURRENT study's RANO response label.\n",
+      "Answer options:\n",
+      "  A) PD\n",
+      "  B) SD\n",
+      "  C) PR\n",
+      "  D) CR\n\n",
+      "Also answer the following evidence questions about the CURRENT study only. Each must be YES or NO:\n",
+      "- NON_MEASURABLE_LESION: Is there a non-measurable lesion in the CURRENT study?\n",
+      "- T2_PROGRESSION: Is T2/FLAIR progression present in the CURRENT study?\n",
+      "- CURRENT_TARGET_LESION: Is there a measurable target lesion in the CURRENT study?\n",
+      "- NEW_TARGET_LESION: Is there a new target lesion in the CURRENT study?\n",
+      "- CURRENT_NON_TARGET_LESION: Is there a non-target lesion in the CURRENT study?\n",
+      "- NEW_NON_TARGET_LESION: Is there a new non-target lesion in the CURRENT study?\n\n",
+      "Important constraints:\n",
+      "{{registration_hint}}",
+      "- The benchmark does NOT allow Pre-Op or Post-Op as answers.\n",
+      "- Compare matching modalities across timepoints, especially CT1, then use FLAIR/T2/T1 as supporting evidence.\n",
+      "- The answer and all evidence fields must describe the CURRENT study only.\n",
+      "- Do not output JSON.\n",
+      "- Do not output UNKNOWN. Every evidence field must be YES or NO.\n\n",
+      "After a short rationale, end with exactly this block (same field names, same order, ANSWER last):\n",
+      "{{output_template}}"
+    ]
+  }
+}

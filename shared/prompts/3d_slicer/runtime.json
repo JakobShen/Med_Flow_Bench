@@ -1,0 +1,24 @@
+{
+  "$schema": "../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "medflowbench.3d_slicer.runtime",
+  "version": "1.1.0",
+  "benchmark": "runtime_tools_and_examples",
+  "track": "shared",
+  "description": "Static model-facing instructions used by shared 3D Slicer runtime tools and examples.",
+  "entrypoints": [
+    "engines/slicer_agent_engine/agents/auto_agent.py",
+    "engines/slicer_agent_engine/runtime_tools/workflows.py",
+    "radiology/slicer_track_a_b/examples/demo_monai_vista3d.py"
+  ],
+  "templates": {
+    "agent": {
+      "image_coords_contract": "Tool contract reminder: when calling image_coords_to_ras, send exactly one of bbox_1000 or point_1000, never both. Use bbox_1000 when you want center_ras from a box; use point_1000 when you want a single clicked point.",
+      "tool_budget": "Tool budget: at most {{max_rounds}} tool-calling rounds. A round is one model turn that may request one or more tools. You must provide the final answer on or before round {{max_rounds}}. If the tool budget is exhausted, immediately give your best final answer using the evidence already in context.",
+      "baseline_image": "Baseline {{view_name}} view from Slicer."
+    },
+    "scroll_sweep_analysis": "You are reading a radiology scroll cine. Summarize where the most suspicious lesion appears, which frames or slice positions are most relevant, and any obvious artifacts or pitfalls. Keep it concise.",
+    "vista3d_demo_system": "This is a tool smoke test. Use the MONAI Label tools, not manual Segment Editor tools. Call monai_label_status, then call vista3d_segment with label_prompt [3]. Inspect the returned overlay image paths and summarize whether the tool call succeeded.",
+    "vista3d_demo_user": "Run the MONAI Label/VISTA3D demo tool and report whether the segmentation was imported into Slicer."
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "pathology.camelyon17",
+  "version": "1.0.1",
+  "benchmark": "CAMELYON17",
+  "track": "Pathology",
+  "description": "Viewer-native lymph-node whole-slide classification and localization prompt.",
+  "entrypoints": [
+    "pathology/benchmarks/benchmark_camelyon17.py"
+  ],
+  "templates": {
+    "system_extra": [
+      "Benchmark-specific rules:\n",
+      "- This is a blinded CAMELYON17 slide-level pathology benchmark. The image is already loaded before the first model step.\n",
+      "- Do not ask for file paths, hidden annotations, hidden masks, hidden XML files, or dataset metadata.\n",
+      "- Use the viewer screenshot for pathology reasoning.\n",
+      "- This run is slide-level only. Do not attempt patient-level pN staging in the final answer.\n",
+      "- If you believe metastatic tumor is present, localize one or more tumor points by calling viewer_point_to_wsi_coordinate on the current viewer screenshot.\n",
+      "- The conversion tool expects x and y in the range 0..999, measured on the CURRENT viewer screenshot, with origin at the top-left.\n",
+      "- The conversion tool returns full-resolution QuPath/WSI image coordinates. Use those returned coordinates in the final answer.\n",
+      "- If you conclude there is no tumor and the slide-level label is negative, do not output any coordinates.\n",
+      "- You may output multiple coordinates because one WSI may contain multiple tumor foci.\n",
+      "- Choose points on the main tissue image, not on the overview thumbnail, scale bar, or text overlays.\n",
+      "- Do not rely on nominal magnification metadata alone. Prefer relative zooming and visible tissue context over assuming that an absolute target such as 10x is trustworthy.\n",
+      "- If a zoomed-in view lands on blank background, off-tissue area, or an obviously uninformative patch, zoom back out or pan until tissue is visible again before concluding.\n",
+      "- If you are uncertain, state the uncertainty plainly. Do not invent findings.\n",
+      "- Your final response must be JSON only."
+    ],
+    "case_summary": [
+      "Case alias: {{case_alias}}\n",
+      "A blinded CAMELYON17 lymph node H&E whole-slide image is already loaded in QuPath.\n",
+      "Ground-truth masks and annotations are hidden from you.\n",
+      "This run is slide-level only. Determine whether tumor is present, select the slide-level metastasis category, and output tumor coordinates when positive."
+    ],
+    "task": [
+      "You are evaluating a blinded CAMELYON17 lymph node H&E whole-slide image in QuPath.\n\n",
+      "Slide-level tasks:\n",
+      "1) Tumor presence?\n",
+      "{{tumor_options}}\n\n",
+      "2) Largest metastasis category for this slide?\n",
+      "{{slide_options}}\n\n",
+      "Important rules:\n",
+      "- The image is already loaded in QuPath.\n",
+      "- Ground-truth masks and annotations are hidden from you.\n",
+      "- This run is slide-level only. Do not answer patient-level staging questions.\n",
+      "- If you conclude tumor is absent and the slide-level label is negative, localizations must be an empty list.\n",
+      "- If you conclude tumor is present, output one or more tumor coordinates in full-resolution WSI image pixels.\n",
+      "- To obtain a coordinate, call viewer_point_to_wsi_coordinate with x and y in 0..999 on the CURRENT viewer screenshot, measured from the top-left corner.\n",
+      "- Use the x and y returned by that tool in the final answer.\n",
+      "- You may output multiple coordinates because one WSI may contain multiple tumor foci.\n",
+      "- Choose points on the main tissue image, not on the overview thumbnail, scale bar, or text overlays.\n",
+      "- Prefer relative zooming and visible tissue context over trusting nominal magnification metadata alone.\n",
+      "- If a zoomed-in view lands on blank background or off-tissue area, zoom back out or pan until informative tissue is visible again before concluding.\n",
+      "- If you are uncertain, state the uncertainty plainly. Do not invent findings.\n\n",
+      "Final answer format:\n",
+      "Return JSON only, with exactly these keys:\n",
+      "{\n",
+      "  \"tumor_presence_option\": \"A|B\",\n",
+      "  \"tumor_presence\": \"no_tumor|tumor_present\",\n",
+      "  \"largest_metastasis_option\": \"A|B|C|D\",\n",
+      "  \"largest_metastasis\": \"negative|itc|micro|macro\",\n",
+      "  \"confidence\": 0.0,\n",
+      "  \"brief_rationale\": \"...\",\n",
+      "  \"localizations\": [{\"x\": 0.0, \"y\": 0.0}]\n",
+      "}"
+    ]
+  }
+}

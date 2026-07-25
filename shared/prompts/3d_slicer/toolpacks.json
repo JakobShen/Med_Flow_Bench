@@ -1,0 +1,21 @@
+{
+  "$schema": "../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "medflowbench.3d_slicer.toolpacks",
+  "version": "1.0.0",
+  "benchmark": "shared optional toolpacks",
+  "track": "Track B",
+  "description": "Conditional model-facing hints injected when optional Slicer toolpacks are enabled.",
+  "entrypoints": [
+    "engines/slicer_agent_engine/benchmarking/toolpack_cli.py",
+    "radiology/slicer_track_a_b/benchmark_NSCLC.py"
+  ],
+  "templates": {
+    "benchmark_hints": {
+      "segmentation": "You must actively use the SegmentationTools in this run to support localization and reasoning. Do not rely only on viewer navigation when segmentation can help. Call one or more segmentation tools before your final answer, e.g. segment_from_threshold or segment_local_threshold.",
+      "registration": "You must actively use the RegistrationTools in this run to align OLD and CURRENT studies before final longitudinal comparison. Prefer BRAINSFit/brains_resample for rigid or affine alignment, and use manual transform tools only if automatic registration is insufficient.",
+      "monai_label": "If MONAI Label/VISTA3D can help, first call monai_label_status, then call vista3d_segment and inspect the returned normal Slicer viewer images before your final answer.",
+      "vista3d": "VISTA3D is available for this NSCLC CT run. When localizing the primary lung tumor or supporting KEY_SLICE/RSA evidence, first call monai_label_status, then call vista3d_segment(label_prompt=[23], auto_show=true, auto_center=true), and inspect the returned normal Slicer viewer images. Use show_segmentation/hide_segmentation only if you need to toggle the mask."
+    }
+  }
+}

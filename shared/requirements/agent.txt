@@ -1,0 +1,4 @@
+# Provider SDKs used by Track A/B and API-backed Track C methods.
+openai>=1.107.0
+google-genai>=1.21.1
+anthropic>=0.39.0

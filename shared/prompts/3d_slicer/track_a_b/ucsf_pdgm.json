@@ -1,0 +1,96 @@
+{
+  "$schema": "../../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "3d_slicer.track_a_b.ucsf_pdgm",
+  "version": "1.1.0",
+  "benchmark": "UCSF-PDGM",
+  "track": "Track A/B",
+  "description": "Viewer-native brain MRI diagnosis and localization prompt.",
+  "entrypoints": [
+    "radiology/slicer_track_a_b/benchmark_UCSF_PDGM.py"
+  ],
+  "templates": {
+    "fragments": {
+      "tool_guidance": {
+        "none": "Use only the baseline/core tools already exposed in this run. ",
+        "manual": "Use the provided tools to inspect images and switch among the already loaded sequences. ",
+        "auto": "Use the provided tools, including the already active optional tool pack tools, to inspect images and switch among the already loaded sequences. "
+      },
+      "force_gemini": {
+        "disabled": "",
+        "enabled": "When you use scroll, you must do both keyframe extraction and Gemini analysis of the scroll video to avoid missing subtle details. "
+      },
+      "code_execution": {
+        "disabled": "",
+        "enabled": " A provider-native code execution tool is enabled. You may use it for multi-pass visual inspection or precise 0..999 image-space localization when the task benefits from that level of visual reasoning."
+      },
+      "disturb_options": {
+        "disabled": "",
+        "enabled": "  D) Dysembryoplastic neuroepithelial tumor (DNET) / Ganglioglioma\n  E) Pilocytic Astrocytoma\n  F) Central Neurocytoma / Ependymoma\n"
+      },
+      "segment_source_line": "A geometry-matched loaded reference volume is '{{source_name}}'. You may use that as a convenient anchor, but the benchmark accepts any loaded anatomical MRI sequence in the shared co-registered space.\n",
+      "case_brief_evidence": {
+        "disabled": "",
+        "shared_space": "- Hidden tumor mask is evaluated in a shared co-registered MRI space.\n- Evidence may be measured on any loaded anatomical MRI sequence where the tumor is clearly visible; provenance to one specific MRI series is not enforced for this dataset.\n",
+        "named_reference": "- Hidden tumor mask is evaluated in a shared co-registered MRI space. A geometry-matched loaded reference volume is {{source_name}}.\n- Evidence may be measured on any loaded anatomical MRI sequence where the tumor is clearly visible; provenance to one specific MRI series is not enforced for this dataset.\n"
+      }
+    },
+    "case_brief": [
+      "Case brief for {{case_id}}:\n",
+      "- CSV ID: {{csv_id}}\n",
+      "- Loaded core NIfTI files: {{core_sequences}}\n",
+      "{{evidence_note}}",
+      "- The current scene inventory will also be shown after open_case so you do not need a separate listing tool.\n",
+      "- Treat the loaded T1/T1c/T2/FLAIR-style sequences as your main evidence sources for this benchmark."
+    ],
+    "system": [
+      "You are an AI radiology assistant using a remote MRI viewer (3D Slicer). ",
+      "The case has already been opened by the system before you start. ",
+      "Do NOT call open_case unless the viewer is clearly empty/broken. ",
+      "If you must call open_case, use the exact absolute path provided in the user message. ",
+      "The case is already opened with a core multi-sequence MRI subset, and the current scene inventory is provided in the prompt. ",
+      "{{tool_guidance}}",
+      "{{force_gemini_guidance}}",
+      "If Gemini video analysis conflicts with keyframe evidence, prioritize the keyframe evidence. ",
+      "If the task requests KEY_SLICE_*_MM evidence, report canonical RAS-axis mm from the image corner overlay: axial=S, sagittal=R, coronal=A. Do not use slice indices. ",
+      "When calling image_coords_to_ras, send exactly one of bbox_1000 or point_1000; never send both in the same call. Use bbox_1000 if you want the box center, otherwise use point_1000 for a single clicked point. ",
+      "Your task is a 3-way multiple choice classification based on MRI appearance. ",
+      "If you are unsure, still choose the most likely option and explain why. ",
+      "Do not output JSON. If the task requests an evidence block, include it exactly once before the final answer line. ",
+      "Output must contain a final line exactly like: 'ANSWER: <{{answer_set}}>'.",
+      "{{code_execution_guidance}}"
+    ],
+    "segment_requirement": [
+      "Additional evidence output is required for this case.\n",
+      "The benchmark has a hidden tumor segmentation in a shared co-registered MRI space. Unlike DICOM-SEG-on-a-single-series workflows, this NIfTI mask is judged in the shared RAS space, so you may localize the tumor on any loaded anatomical MRI sequence where it is clearly visible. T1c is often useful for enhancing tumor; FLAIR/T2 are often useful for non-enhancing abnormality.\n",
+      "{{source_line}}",
+      "If there are multiple disconnected tumor foci, localize the largest connected tumor component.\n",
+      "After your brief rationale, output the following lines exactly once before the final answer line:\n",
+      "EVIDENCE:\n",
+      "KEY_SLICE_AXIAL_MM: <float>\n",
+      "KEY_SLICE_SAGITTAL_MM: <float>\n",
+      "KEY_SLICE_CORONAL_MM: <float>\n",
+      "RSA: [<R>, <A>, <S>]\n",
+      "Definitions:\n",
+      "- Each KEY_SLICE_*_MM value must use canonical RAS-axis mm from the image corner overlay: axial=S, sagittal=R, coronal=A.\n",
+      "- RSA must be a single point strictly inside the visible tumor mask, not on background and not outside the lesion extent.\n",
+      "- Use one loaded MRI sequence consistently while localizing the tumor and producing the evidence block.\n",
+      "- If you use image_coords_to_ras, pass exactly one of bbox_1000 or point_1000. Never send both in the same call.\n"
+    ],
+    "user": [
+      "Case: {{case_id}}\n\n",
+      "Absolute case path (already opened): {{case_path}}\n\n",
+      "Task: classify the case into ONE option:\n",
+      "  A) Glioblastoma\n",
+      "  B) Oligodendroglioma / Astrocytoma\n",
+      "  C) No tumor\n",
+      "{{extra_options}}\n",
+      "Steps you should follow:\n",
+      "1) Review baseline views.\n",
+      "2) Use the prompt-provided scene inventory to choose among the loaded sequences, then use select_volume to switch sequences (e.g., T1, T1c, T2, FLAIR).\n",
+      "3) Use observe/scroll/zoom/wl as needed. Prefer scroll output='keyframes' unless you truly need video.\n\n",
+      "{{evidence_block}}",
+      "Write a brief rationale, then end with a single final line: ANSWER: <{{answer_set}}>. Finally, leave the viewer on the slice where the lesion is most obvious.\n\n"
+    ]
+  }
+}

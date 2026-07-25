@@ -1,0 +1,5 @@
+# Linux GPU model-serving environment for the Table 1 open-weight VLMs.
+# vLLM installs its compatible PyTorch build.
+vllm==0.21.0
+openai>=1.107.0,<3
+huggingface-hub>=0.34.0

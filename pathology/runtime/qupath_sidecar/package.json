@@ -1,0 +1,19 @@
+{
+  "name": "midscene-qupath-sidecar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated Midscene sidecar for the MedFlowBench QuPath agent",
+  "scripts": {
+    "cli": "tsx src/cli.ts",
+    "env-check": "tsx src/cli.ts env-check"
+  },
+  "dependencies": {
+    "@midscene/computer": "^1.6.2",
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

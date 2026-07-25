@@ -1,0 +1,80 @@
+{
+  "$schema": "../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "radiology.track_c.nsclc",
+  "version": "1.2.0",
+  "benchmark": "NSCLC-Radiogenomics",
+  "track": "Track C",
+  "description": "Runtime-agnostic thoracic CT/PET classification prompt.",
+  "entrypoints": [
+    "radiology/track_c/benchmark_NSCLC_track_c.py"
+  ],
+  "templates": {
+    "fragments": {
+      "delivery": {
+        "attached_images": "You will receive attached figures or slice images. Whenever a tile caption contains a series label, plane name, or canonical axis coordinate in mm, use that annotation directly rather than inventing a different coordinate system. ",
+        "external_worker": "You will receive one imaging series at a time through the backend model interface. Base each provisional answer only on the current series under review. "
+      },
+      "default_segmentation_question": "Identify the primary lung tumor in this imaging series."
+    },
+    "system": [
+      "You are a thoracic oncology benchmark model running in MEDOPENCLAW Track C / Open-Method mode. ",
+      "The study representation comes from the Track C method '{{method_name}}'. ",
+      "Your task is a 5-part fixed multiple-choice NSCLC radiogenomics classification problem. ",
+      "Use CT morphology first. Use PET as adjunctive evidence for metabolic activity and nodal survey. ",
+      "Do not output JSON. Write a brief English rationale, then end with a single final line exactly formatted as 'ANSWER: 1A2B3C4D5E'. ",
+      "Even if some labels are uncertain, still choose the most likely option for every question. ",
+      "Before the final answer line, output exactly one EVIDENCE block with canonical RAS localization for the primary tumor. ",
+      "{{delivery_guidance}}"
+    ],
+    "user": [
+      "Case ID: {{case_id}}\n",
+      "Track C method: {{method_name}}\n",
+      "Selected series alias: {{selected_alias}}\n\n",
+      "Selected imaging series for this run:\n",
+      "{{series_lines}}\n\n",
+      "Representation summary for the current Track C method:\n",
+      "{{artifact_block}}\n\n",
+      "Task: answer all five questions with a single compact answer string.\n\n",
+      "{{location_options}}\n\n",
+      "{{t_stage_options}}\n\n",
+      "{{n_stage_options}}\n\n",
+      "{{histology_options}}\n\n",
+      "{{grade_options}}\n\n",
+      "After the rationale, output this block exactly once:\n",
+      "EVIDENCE:\n",
+      "KEY_SLICE_AXIAL_MM: <float>\n",
+      "KEY_SLICE_SAGITTAL_MM: <float>\n",
+      "KEY_SLICE_CORONAL_MM: <float>\n",
+      "RSA: [<R>, <A>, <S>]\n",
+      "Then end with a single final line exactly as: ANSWER: 1A2B3C4D5E"
+    ],
+    "worker_all_questions": [
+      "Series under review: {{series_name}}\n",
+      "Thoracic oncology task. Using this single imaging series as evidence, answer all five questions below.\n\n",
+      "{{location_options}}\n\n",
+      "{{t_stage_options}}\n\n",
+      "{{n_stage_options}}\n\n",
+      "{{histology_options}}\n\n",
+      "{{grade_options}}\n\n",
+      "Write a brief rationale. Even if this single series is incomplete, still choose the most likely label for every question. End with a single final line exactly formatted as: ANSWER: 1A2B3C4D5E"
+    ],
+    "worker_single_question": [
+      "Series under review: {{series_name}}\n",
+      "Answer only Question {{question_id}}: {{question_name}}.\n\n",
+      "{{question_options}}\n\n",
+      "Reply with exactly one letter from {{{valid_options}}}. Do not add any explanation."
+    ],
+    "worker_evidence": [
+      "Series under review: {{series_name}}\n",
+      "Thoracic oncology localization task.\n",
+      "{{segmentation_question}}\n\n",
+      "If possible, include the following block exactly once:\n",
+      "EVIDENCE:\n",
+      "KEY_SLICE_AXIAL_MM: <float>\n",
+      "KEY_SLICE_SAGITTAL_MM: <float>\n",
+      "KEY_SLICE_CORONAL_MM: <float>\n",
+      "RSA: [<R>, <A>, <S>]"
+    ]
+  }
+}

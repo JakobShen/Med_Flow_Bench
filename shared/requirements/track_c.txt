@@ -1,0 +1,11 @@
+# Standalone dependencies for Track C. No 3D Slicer runtime is required.
+
+numpy>=1.24.0
+scipy>=1.10.0
+nibabel>=5.1.0
+Pillow>=10.0.0
+pydicom>=2.4.0
+requests>=2.31.0
+openai>=1.0.0
+google-genai>=1.0.0
+anthropic>=0.39.0

@@ -1,0 +1,6 @@
+-r base.txt
+-r agent.txt
+
+# QuPath benchmark manifests and local environment loading.
+python-dotenv>=1.0.1
+openpyxl>=3.1.5

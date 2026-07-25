@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "sets": {
+    "medgemma": [
+      "medgemma-1.5-4b-it",
+      "medgemma-27b-it"
+    ],
+    "open": [
+      "qwen3.5-35b-a3b",
+      "qwen3.5-27b",
+      "qwen3.5-9b",
+      "qwen3.5-4b",
+      "gemma-3-27b-it",
+      "medgemma-1.5-4b-it",
+      "medgemma-27b-it",
+      "lingshu-32b"
+    ],
+    "hosted": [
+      "gpt-5.4-mini",
+      "gpt-5.5",
+      "gemini-3-flash-preview",
+      "gemini-3.1-pro-preview",
+      "claude-sonnet-4.6",
+      "claude-opus-4.7"
+    ],
+    "all": [
+      "gpt-5.4-mini",
+      "gpt-5.5",
+      "gemini-3-flash-preview",
+      "gemini-3.1-pro-preview",
+      "claude-sonnet-4.6",
+      "claude-opus-4.7",
+      "qwen3.5-35b-a3b",
+      "qwen3.5-27b",
+      "qwen3.5-9b",
+      "qwen3.5-4b",
+      "gemma-3-27b-it",
+      "medgemma-1.5-4b-it",
+      "medgemma-27b-it",
+      "lingshu-32b"
+    ]
+  },
+  "models": {
+    "gpt-5.4-mini": {
+      "paper_label": "GPT-5.4 mini",
+      "category": "general-purpose",
+      "runtime": "hosted",
+      "provider": "openai",
+      "model": "gpt-5.4-mini"
+    },
+    "gpt-5.5": {
+      "paper_label": "GPT-5.5",
+      "category": "general-purpose",
+      "runtime": "hosted",
+      "provider": "openai",
+      "model": "gpt-5.5"
+    },
+    "gemini-3-flash-preview": {
+      "paper_label": "Gemini 3 Flash Preview",
+      "category": "general-purpose",
+      "runtime": "hosted",
+      "provider": "gemini",
+      "model": "gemini-3-flash-preview"
+    },
+    "gemini-3.1-pro-preview": {
+      "paper_label": "Gemini 3.1 Pro Preview",
+      "category": "general-purpose",
+      "runtime": "hosted",
+      "provider": "gemini",
+      "model": "gemini-3.1-pro-preview"
+    },
+    "claude-sonnet-4.6": {
+      "paper_label": "Claude Sonnet 4.6",
+      "category": "general-purpose",
+      "runtime": "hosted",
+      "provider": "claude",
+      "model": "claude-sonnet-4-6"
+    },
+    "claude-opus-4.7": {
+      "paper_label": "Claude Opus 4.7",
+      "category": "general-purpose",
+      "runtime": "hosted",
+      "provider": "claude",
+      "model": "claude-opus-4-7"
+    },
+    "qwen3.5-35b-a3b": {
+      "paper_label": "Qwen3.5-35B-A3B",
+      "category": "general-purpose",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "Qwen/Qwen3.5-35B-A3B",
+      "source_model": "Qwen/Qwen3.5-35B-A3B",
+      "served_model": "Qwen/Qwen3.5-35B-A3B",
+      "vllm_args": [
+        "--max-model-len",
+        "65536"
+      ]
+    },
+    "qwen3.5-27b": {
+      "paper_label": "Qwen3.5-27B",
+      "category": "general-purpose",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "Qwen/Qwen3.5-27B",
+      "source_model": "Qwen/Qwen3.5-27B",
+      "served_model": "Qwen/Qwen3.5-27B",
+      "vllm_args": [
+        "--max-model-len",
+        "65536"
+      ]
+    },
+    "qwen3.5-9b": {
+      "paper_label": "Qwen3.5-9B",
+      "category": "general-purpose",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "Qwen/Qwen3.5-9B",
+      "source_model": "Qwen/Qwen3.5-9B",
+      "served_model": "Qwen/Qwen3.5-9B",
+      "vllm_args": [
+        "--max-model-len",
+        "65536"
+      ]
+    },
+    "qwen3.5-4b": {
+      "paper_label": "Qwen3.5-4B",
+      "category": "general-purpose",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "Qwen/Qwen3.5-4B",
+      "source_model": "Qwen/Qwen3.5-4B",
+      "served_model": "Qwen/Qwen3.5-4B",
+      "vllm_args": [
+        "--max-model-len",
+        "65536"
+      ]
+    },
+    "gemma-3-27b-it": {
+      "paper_label": "Gemma 3 27B IT",
+      "category": "general-purpose",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "google/gemma-3-27b-it",
+      "source_model": "google/gemma-3-27b-it",
+      "served_model": "google/gemma-3-27b-it",
+      "vllm_args": [
+        "--max-model-len",
+        "32768"
+      ]
+    },
+    "medgemma-1.5-4b-it": {
+      "paper_label": "MedGemma 1.5 4B IT",
+      "category": "medical-domain",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "google/medgemma-1.5-4b-it",
+      "source_model": "google/medgemma-1.5-4b-it",
+      "served_model": "google/medgemma-1.5-4b-it",
+      "requires_hf_access": true,
+      "vllm_args": [
+        "--max-model-len",
+        "32768"
+      ]
+    },
+    "medgemma-27b-it": {
+      "paper_label": "MedGemma 27B IT",
+      "category": "medical-domain",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "google/medgemma-27b-it",
+      "source_model": "google/medgemma-27b-it",
+      "served_model": "google/medgemma-27b-it",
+      "requires_hf_access": true,
+      "vllm_args": [
+        "--max-model-len",
+        "32768"
+      ]
+    },
+    "lingshu-32b": {
+      "paper_label": "Lingshu-32B",
+      "category": "medical-domain",
+      "runtime": "vllm",
+      "provider": "local_vllm",
+      "model": "lingshu-medical-mllm/Lingshu-32B",
+      "source_model": "lingshu-medical-mllm/Lingshu-32B",
+      "served_model": "lingshu-medical-mllm/Lingshu-32B",
+      "vllm_args": [
+        "--max-model-len",
+        "32768"
+      ]
+    }
+  }
+}

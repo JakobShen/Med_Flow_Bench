@@ -1,0 +1,13 @@
+# VISTA3D accelerator environment.
+# Install the CUDA-matched PyTorch build before this file. The public setup
+# script defaults to the versions used by the audited server environment.
+-r base.txt
+
+fastapi>=0.110.0
+uvicorn>=0.27.0
+python-multipart>=0.0.9
+monai[fire,ignite]==1.5.2
+monailabel==0.8.5
+huggingface-hub>=0.34.0
+SimpleITK>=2.5.0,<3
+pydicom>=3.0.0,<4

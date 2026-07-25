@@ -3,13 +3,14 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "slicer-agent-engine-benchmarks"
+name = "medflow-bench"
 version = "0.2.0"
-description = "Public benchmark subset with dataset loaders, deterministic judges, and Track3 runners"
+description = "MedFlowBench radiology and pathology benchmark runners for 3D Slicer, QuPath, and runtime-agnostic medical VLM evaluation"
 readme = "README.md"
-requires-python = ">=3.10"
-authors = [{name = "slicer-agent-engine contributors"}]
+requires-python = ">=3.10,<3.11"
+authors = [{name = "MedFlowBench contributors"}]
 license = {text = "Apache-2.0"}
+
 dependencies = [
   "numpy>=1.24.0",
   "scipy>=1.10.0",
@@ -17,14 +18,45 @@ dependencies = [
   "Pillow>=10.0.0",
   "pydicom>=2.4.0",
   "requests>=2.31.0",
+  "pydantic>=2.6.0",
 ]
 
 [project.optional-dependencies]
-api = [
-  "openai>=1.0.0",
-  "google-genai>=1.0.0",
+agent = [
+  "openai>=1.107.0",
+  "google-genai>=1.21.1",
   "anthropic>=0.39.0",
 ]
+qupath = [
+  "python-dotenv>=1.0.1",
+  "openpyxl>=3.1.5",
+]
+mcp = [
+  "fastmcp>=2.11.0",
+  "mcp[cli]>=1.2.0",
+]
+server = [
+  "fastapi>=0.110.0",
+  "uvicorn>=0.27.0",
+  "python-multipart>=0.0.9",
+]
+dev = [
+  "pytest==8.4.2",
+]
+
+[tool.setuptools]
+package-dir = {"" = "engines"}
 
 [tool.setuptools.packages.find]
-include = ["slicer_agent_engine*"]
+where = ["engines"]
+include = ["medflow_prompts*", "radiology_track_c*", "slicer_agent_engine*", "qupath_agent_engine*"]
+
+[tool.setuptools.package-data]
+"qupath_agent_engine.software.qupath" = ["java/*.java"]
+
+[project.scripts]
+slicer-agent-mcp = "slicer_agent_engine.mcp_server:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["engines"]
+testpaths = ["shared/tests"]

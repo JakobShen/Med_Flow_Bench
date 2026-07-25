@@ -1,0 +1,81 @@
+{
+  "$schema": "../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "radiology.track_c.lumiere",
+  "version": "1.1.0",
+  "benchmark": "LUMIERE",
+  "track": "Track C",
+  "description": "Runtime-agnostic longitudinal RANO classification prompt.",
+  "entrypoints": [
+    "radiology/track_c/benchmark_LUMIERE_track_c.py"
+  ],
+  "templates": {
+    "fragments": {
+      "delivery": {
+        "attached_images": "You will receive attached figures or slice images from both OLD and CURRENT studies. Use tile captions directly when they identify OLD versus CURRENT and the modality. ",
+        "external_worker": "You will receive one synthetic longitudinal pair volume at a time through the backend model interface. For each pair volume, compare the CURRENT half against the OLD half before answering. "
+      }
+    },
+    "output": [
+      "NON_MEASURABLE_LESION: <YES|NO>\n",
+      "T2_PROGRESSION: <YES|NO>\n",
+      "CURRENT_TARGET_LESION: <YES|NO>\n",
+      "NEW_TARGET_LESION: <YES|NO>\n",
+      "CURRENT_NON_TARGET_LESION: <YES|NO>\n",
+      "NEW_NON_TARGET_LESION: <YES|NO>\n",
+      "ANSWER: <A|B|C|D>"
+    ],
+    "system": [
+      "You are a longitudinal neuro-oncology benchmark model running in MEDOPENCLAW Track C / Open-Method mode. ",
+      "The study representation comes from the Track C method '{{method_name}}'. ",
+      "Your task is a 4-way multiple-choice RANO response classification problem comparing CURRENT against OLD. ",
+      "Choose exactly one answer: A, B, C, or D. The answer mapping is A=PD, B=SD, C=PR, D=CR. ",
+      "Also output the required YES/NO evidence fields for the CURRENT study only. ",
+      "Do not output JSON. Write a brief rationale, then end with the exact structured block shown in the user message, with ANSWER as the final line. ",
+      "Even if uncertain, still choose the most likely answer and fill every evidence field with YES or NO. ",
+      "{{delivery_guidance}}"
+    ],
+    "user": [
+      "Question ID: {{question_id}}\n",
+      "Patient: {{patient_id}}\n",
+      "OLD reference study: {{old_timepoint}}\n",
+      "CURRENT study to classify: {{current_timepoint}}\n",
+      "Track C method: {{method_name}}\n\n",
+      "Staged MRI volumes for this run:\n",
+      "{{series_lines}}\n\n",
+      "Representation summary for the current Track C method:\n",
+      "{{artifact_block}}\n\n",
+      "{{loaded_volume_guide}}\n\n",
+      "Task: compare the CURRENT study against the OLD reference study and choose the CURRENT study's RANO response label.\n",
+      "Answer options:\n",
+      "  A) PD\n",
+      "  B) SD\n",
+      "  C) PR\n",
+      "  D) CR\n\n",
+      "Also answer the following evidence questions about the CURRENT study only. Each must be YES or NO:\n",
+      "- NON_MEASURABLE_LESION: Is there a non-measurable lesion in the CURRENT study?\n",
+      "- T2_PROGRESSION: Is T2/FLAIR progression present in the CURRENT study?\n",
+      "- CURRENT_TARGET_LESION: Is there a measurable target lesion in the CURRENT study?\n",
+      "- NEW_TARGET_LESION: Is there a new target lesion in the CURRENT study?\n",
+      "- CURRENT_NON_TARGET_LESION: Is there a non-target lesion in the CURRENT study?\n",
+      "- NEW_NON_TARGET_LESION: Is there a new non-target lesion in the CURRENT study?\n\n",
+      "Important constraints:\n",
+      "- The benchmark does NOT allow Pre-Op or Post-Op as answers.\n",
+      "- Compare matching modalities across timepoints, especially CT1, then use FLAIR/T2/T1 as supporting evidence.\n",
+      "- The answer and all evidence fields must describe the CURRENT study only.\n",
+      "- Do not output JSON.\n",
+      "- Do not output UNKNOWN. Every evidence field must be YES or NO.\n\n",
+      "After a short rationale, end with exactly this block (same field names, same order, ANSWER last):\n",
+      "{{output_template}}"
+    ],
+    "worker": [
+      "Longitudinal pair volume under review: modality {{modality}}\n",
+      "The volume is synthetic. The first contiguous slice block corresponds to OLD ({{old_timepoint}}), then there are {{gap_slices}} blank separator slices, then the CURRENT ({{current_timepoint}}) slice block.\n",
+      "Compare the CURRENT block against the OLD block and choose the CURRENT study's RANO response label.\n",
+      "Answer options: A) PD  B) SD  C) PR  D) CR.\n",
+      "Also output these CURRENT-study-only YES/NO evidence fields: NON_MEASURABLE_LESION, T2_PROGRESSION, CURRENT_TARGET_LESION, NEW_TARGET_LESION, CURRENT_NON_TARGET_LESION, NEW_NON_TARGET_LESION.\n",
+      "Write a brief rationale, then end with exactly this block (same field names, same order, ANSWER last):\n",
+      "{{output_template}}"
+    ]
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "../../schema.json",
+  "schema_version": "1.0",
+  "prompt_id": "3d_slicer.track_a_b.nsclc",
+  "version": "1.1.0",
+  "benchmark": "NSCLC-Radiogenomics",
+  "track": "Track A/B",
+  "description": "Viewer-native thoracic CT/PET classification and localization prompt.",
+  "entrypoints": [
+    "radiology/slicer_track_a_b/benchmark_NSCLC.py"
+  ],
+  "templates": {
+    "fragments": {
+      "case_series_system": {
+        "disabled": "",
+        "manual": "The prompt also lists additional curated alias groups. If you need to switch to one of them, first activate the case_series tool pack, then call load_case_series(alias). ",
+        "auto": "The prompt also lists additional curated alias groups. If you need to switch to one of them, call load_case_series(alias). "
+      },
+      "tool_guidance": {
+        "none": "Only the baseline/core tools are available in this run. ",
+        "manual": "Only activate optional packs when the task truly needs them. ",
+        "auto": "Optional tool pack tools are already active in this run; use them directly only when the task truly needs them. "
+      },
+      "code_execution": {
+        "disabled": "",
+        "enabled": " A provider-native code execution tool is enabled. For any localization-heavy subtask, you may use it for multi-pass image inspection and to produce precise 0..999 bounding boxes before using image_coords_to_ras or segmentation tools."
+      },
+      "case_series_intro": {
+        "disabled": "",
+        "manual": " The prompt also lists additional curated CT/PET alias groups as reference groupings; if you need to switch to one of them explicitly, first activate the case_series tool pack and then call load_case_series(alias).",
+        "auto": " The prompt also lists additional curated CT/PET alias groups as reference groupings; if you need to switch to one of them explicitly, call load_case_series(alias)."
+      },
+      "case_series_requirement": {
+        "disabled": "- If CT and PET are already loaded and alignment is acceptable, you may use the core fusion tool directly.\n",
+        "manual": "- If you need aligned PET/CT, prefer the curated alias pet_ct_core after activating the case_series tool pack.\n",
+        "auto": "- If you need aligned PET/CT, prefer the curated alias pet_ct_core via load_case_series(alias).\n"
+      },
+      "final_answer_requirement": {
+        "default": "- Explain your reasoning briefly in English, then end with the final compact answer string only once.\n",
+        "with_evidence": "- Explain your reasoning briefly in English.\n- If the evidence block is required above, include it exactly once before the final compact answer string.\n- End with the final compact answer string only once.\n"
+      },
+      "case_brief_series_note": {
+        "disabled": "",
+        "manual": "- Additional curated alias groups are listed below. Read them like a reference sheet; they are not separate query tools.\n- If you need to switch to another curated alias group, first activate the case_series tool pack, then call load_case_series(alias).\n",
+        "auto": "- Additional curated alias groups are listed below. Read them like a reference sheet; they are not separate query tools.\n- If you need to switch to another curated alias group, call load_case_series(alias).\n"
+      },
+      "case_brief_evidence_source": "- Required evidence source series: {{source_label}}. Switch/select this loaded series before measuring KEY_SLICE_*_MM or RSA, and keep it active while calling image_coords_to_ras.\n"
+    },
+    "case_brief": [
+      "Case brief for {{case_id}}:\n",
+      "- All resolved series across all available timepoints were preloaded at start.\n",
+      "- Preferred initial viewing heuristic: {{default_alias}}\n",
+      "{{evidence_source_note}}",
+      "{{case_series_note}}\n",
+      "{{catalog}}"
+    ],
+    "system": [
+      "You are a clinically grounded multimodal thoracic imaging assistant using a remote 3D Slicer viewer. ",
+      "All resolved imaging series across all available timepoints for the case are already loaded, and the currently loaded scene inventory is provided in the prompt. ",
+      "Use CT morphology first. Use PET as adjunctive evidence for metabolic activity and nodal survey. ",
+      "{{case_series_guidance}}",
+      "For chest CT inspection, use window_preset with ct_lung and ct_mediastinal as needed. ",
+      "If the task requests KEY_SLICE_*_MM evidence, report the canonical RAS-axis mm shown in the image corner overlay: axial=S, sagittal=R, coronal=A. Do not use the native viewer-header sign convention if it differs from the corner overlay. ",
+      "{{tool_guidance}}",
+      "When calling image_coords_to_ras, send exactly one of bbox_1000 or point_1000; never send both in the same call. Use bbox_1000 if you want the box center, otherwise use point_1000 for a single clicked point. ",
+      "Do not output JSON. Write a brief English rationale. If the task asks for an evidence block, include it exactly as requested before the final compact answer string. End with a single compact answer string exactly like 1C2D3B4A5B, and do not repeat it.",
+      "{{code_execution_guidance}}"
+    ],
+    "segment_requirement": [
+      "Additional evidence output is required for this case.\n",
+      "The benchmark has a hidden lesion segmentation{{segment_phrase}}. Report the localization evidence on {{source_phrase}} only. Do not reuse coordinates from any other loaded series even if the anatomy looks aligned. If there are multiple disconnected visible tumor foci, localize the largest tumor component.\n",
+      "Before producing the evidence block, explicitly switch/select the loaded source series that matches this hidden source volume and keep that source series active while localizing the tumor.\n",
+      "After your brief rationale, output the following lines exactly once before the final compact answer string:\n",
+      "EVIDENCE:\n",
+      "KEY_SLICE_AXIAL_MM: <float>\n",
+      "KEY_SLICE_SAGITTAL_MM: <float>\n",
+      "KEY_SLICE_CORONAL_MM: <float>\n",
+      "RSA: [<R>, <A>, <S>]\n",
+      "Definitions:\n",
+      "- Each KEY_SLICE_*_MM value must use canonical RAS-axis mm from the image corner overlay on the active hidden-source series: axial=S, sagittal=R, coronal=A. Do not use the native viewer-header sign convention if it differs from the corner overlay.\n",
+      "- axial/sagittal/coronal refer to the three standard slice viewers, not slice indices.\n",
+      "- RSA must be a single point strictly inside the visible primary tumor on that same hidden-source series.\n",
+      "- If you use image_coords_to_ras, pass exactly one of bbox_1000 or point_1000. Never send both in the same call. If you want the center of a box, send only bbox_1000 and use center_ras from the tool output.\n",
+      "- Keep the active source series on the correct volume when producing the evidence. If needed, explicitly call select_volume(volume_name=...) on the source series before the evidence block.\n"
+    ],
+    "user": [
+      "Case: {{case_id}}\n\n",
+      "This is a multimodal thoracic oncology case. All resolved imaging series across all available timepoints are preloaded.{{case_series_intro}}\n\n",
+      "Answer the following five multiple-choice questions based on the imaging only.\n",
+      "Return your final answer in one single compact string, with NO spaces, exactly like: 1C2D3B4A5B\n\n",
+      "Q1. Tumor location\n",
+      "1A Right upper lobe\n",
+      "1B Right middle lobe\n",
+      "1C Right lower lobe\n",
+      "1D Left upper lobe\n",
+      "1E Left lower lobe\n",
+      "1F Lingula\n",
+      "1G No tumor\n\n",
+      "Q2. Pathological T stage\n",
+      "2A T1\n",
+      "2B T2\n",
+      "2C T3\n",
+      "2D T4\n",
+      "2E Not available / not collected\n",
+      "2F No tumor\n\n",
+      "Q3. Pathological N stage\n",
+      "3A N0\n",
+      "3B N1\n",
+      "3C N2\n",
+      "3D Not available / not collected\n",
+      "3E No tumor\n\n",
+      "Q4. Histology\n",
+      "4A Adenocarcinoma\n",
+      "4B Squamous cell carcinoma\n",
+      "4C Small cell carcinoma\n",
+      "4D Other / indeterminate NSCLC\n",
+      "4E No tumor\n\n",
+      "Q5. Histopathological Grade\n",
+      "5A G1 Well differentiated\n",
+      "5B G2 Moderately differentiated\n",
+      "5C G3 Poorly differentiated\n",
+      "5D Other, Type I: Well to moderately differentiated\n",
+      "5E Other, Type II: Moderately to poorly differentiated\n",
+      "5F No tumor\n\n",
+      "{{evidence_block}}",
+      "Requirements:\n",
+      "- Start from CT morphology.\n",
+      "- Use PET as adjunctive evidence for metabolic activity and nodal survey.\n",
+      "{{case_series_requirement}}",
+      "{{final_answer_requirement}}"
+    ]
+  }
+}

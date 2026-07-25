@@ -1,0 +1,4 @@
+# Host-side dependencies for the shared 3D Slicer Track A/B runners.
+# 3D Slicer and its extensions are installed separately.
+-r base.txt
+-r agent.txt

@@ -1,34 +1,88 @@
+# Python and test caches
 __pycache__/
 *.py[cod]
-*.egg-info/
-.DS_Store
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
+# Environments and packaging
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+node_modules/
+npm-debug.log*
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Credentials and local configuration
 .env
 .env.*
-aa_api_key*
+!.env.example
+*_api_key*
 *credentials*.json
 *service-account*.json
 *.pem
 *.key
-id_ed25519*
-id_rsa*
 
-runs/
-logs/
+# Datasets, model weights, and external repositories
 data/
 datasets/
 models/
 model/
 checkpoints/
-outputs/
-artifacts/
+weights/
+external/
 .download_work/
-.download_tools/
-*.pid
-*.status
+*.svs
+*.ndpi
+*.mrxs
+*.czi
+*.scn
+*.qpdata
+*.qpproj
 
-.venv/
-venv/
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
+# Benchmark and runtime outputs
+runs/
+outputs/
+results/
+logs/
+artifacts/
+traces/
+tmp/
+*.log
+*.jsonl
+state.json
+summary.json
+result.json
+Paper_Table_Data.json
+
+# Generated media and archives
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.tif
+*.tiff
+*.mp4
+*.mov
+*.avi
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.class
+*.jar
+!shared/docs/assets/
+!shared/docs/assets/**
