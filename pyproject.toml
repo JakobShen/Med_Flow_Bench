@@ -57,6 +57,10 @@ include = ["medflow_prompts*", "radiology_track_c*", "slicer_agent_engine*", "qu
 [project.scripts]
 slicer-agent-mcp = "slicer_agent_engine.mcp_server:main"
 
+[project.urls]
+Repository = "https://github.com/JakobShen/Med_Flow_Bench"
+Issues = "https://github.com/JakobShen/Med_Flow_Bench/issues"
+
 [tool.pytest.ini_options]
 pythonpath = ["engines"]
 testpaths = ["shared/tests"]

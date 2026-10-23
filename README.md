@@ -5,6 +5,13 @@ radiology and pathology. It includes 3D Slicer agents, pure Python radiology
 baselines, QuPath agents, structured prompts, deterministic scoring, public
 data helpers, and reproduction launchers.
 
+## Get the Code
+
+```bash
+git clone https://github.com/JakobShen/Med_Flow_Bench.git
+cd Med_Flow_Bench
+```
+
 ## Tracks
 
 | Paper track | Runtime | Released implementation |
